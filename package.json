@@ -4,8 +4,9 @@
   "main": "index.js",
   "build": "tsc",
   "scripts": {
-    "dev": "nodemon server.ts",
-    "start": "node server.ts"
+    "dev": "ts-node-dev --respawn --transpile-only=false server.ts",
+    "start": "node dist/server.js",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
