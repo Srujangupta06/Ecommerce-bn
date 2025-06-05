@@ -4,12 +4,14 @@ dotenv.config();
 import initializeDB from './src/config/db';
 const app = express();
 
-const PORT: number = 5000;
+// Declare PORT
+const PORT: number | string = process.env.PORT ?? 5000;
 
 app.get('/', (req: Request, res: Response): void => {
     res.send('Welcome To The Ecommerce App!');
 })
 
+// Initialize DB And Server
 const initializeDBAndServer = async()=>{
     try{
         await initializeDB()
