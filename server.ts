@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import dotenv from 'dotenv';
 dotenv.config();
 import initializeDB from './src/config/db';
+import { Conflict, UnprocessableEntity } from './src/errors/Errors';
 
 const app = express();
 
@@ -9,7 +10,12 @@ const app = express();
 const PORT: number | string = process.env.PORT ?? 5000;
 
 app.get('/', (req: Request, res: Response) => {
-    res.send('Everything is Working Fine')
+    try{
+        throw new UnprocessableEntity()
+    }
+    catch(e: any){
+        res.status(e.statusCode).json(e)
+    }
 })
 
 // Initialize DB And Server
