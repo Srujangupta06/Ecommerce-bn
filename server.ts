@@ -2,20 +2,22 @@ import express, { NextFunction, Request, Response } from 'express';
 import dotenv from 'dotenv';
 dotenv.config();
 import initializeDB from './src/config/db';
-import { Conflict, UnprocessableEntity } from './src/errors/Errors';
-
+import authRoutes from './src/routes/authRouter';
 const app = express();
 
 // PORT
 const PORT: number | string = process.env.PORT ?? 5000;
 
+// Middlewares
+app.use(express.json());
+
+// Routes
+
+app.use('/api/auth', authRoutes);
+
+
 app.get('/', (req: Request, res: Response) => {
-    try{
-        throw new UnprocessableEntity()
-    }
-    catch(e: any){
-        res.status(e.statusCode).json(e)
-    }
+    res.send('Hello World!');
 })
 
 // Initialize DB And Server
