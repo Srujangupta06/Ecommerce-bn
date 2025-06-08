@@ -1,13 +1,14 @@
 import { Request, Response } from "express";
 import { validateSignUpUser, validateEmailAndOtp } from "../utils/validations/SignUpUser.validate";
 import { UserService } from "../services/UserService";
-import { BadRequest, Conflict, InternalServerError, NotFound } from "../errors/Errors";
-import * as bcrypt from 'bcryptjs'
+import { BadRequest, Conflict, InternalServerError, NotFound, Unauthorized } from "../errors/Errors";
+import * as bcrypt from 'bcryptjs';
 import { sendMail } from "../utils/Mailer";
 import { generateOTP, setOTPExpiration } from "../utils/GenerateOTP";
 import { AuthService } from "../services/AuthService";
 import { sendOtpMailTemplate } from "../utils/MailMessageTemplates";
 import { generateToken } from "../utils/helpers";
+import { validateSignInUser } from "../utils/validations/SignInUser.validate";
 
 export const signUpUser = async (req: Request, res: Response): Promise<any> => {
     try {
@@ -90,3 +91,27 @@ export const verifyOtp = async (req: Request, res: Response): Promise<any> => {
     }
 }
 
+export const signInUser = async (request:Request,response:Response):Promise<any> => {
+    try {
+        const {email,password} = request.body
+        validateSignInUser({email,password})
+        const loginService = new UserService()
+        const user = await loginService.getUserByEmail(email);
+        if(!user){
+            throw new NotFound("User not found")
+        }
+        const hashedPassword = await bcrypt.compare(password,user.password)
+        if(!hashedPassword){
+            throw new Unauthorized("Invalid password")
+        }
+        const token = generateToken({ id: user._id, email})
+        response.json({
+            message:"User Successfully Logedin",
+            token,
+        })
+
+
+    } catch (error:any) {
+        response.status(error.statusCode).json(error)
+    }
+}
