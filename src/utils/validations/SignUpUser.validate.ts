@@ -12,6 +12,8 @@ export const validateSignUpUser = (user: User) => {
 
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
 
+    
+
     const { firstName, lastName, email, password, mobileNumber } = user
     if (firstName.trim() === '' || typeof firstName !== 'string') {
         throw new UnprocessableEntity('First Name is required', { firstName })
