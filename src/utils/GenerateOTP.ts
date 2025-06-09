@@ -9,6 +9,6 @@ export const generateOTP = (n: number): string => {
 
 // OTP Expires in 2 minutes
 export const setOTPExpiration = (): Date => {
-    const otpExpiresAt = new Date(Date.now() + 2 * 60 * 1000);
+    const otpExpiresAt = new Date(Date.now() + 1 * 60 * 1000);
     return otpExpiresAt
 }
