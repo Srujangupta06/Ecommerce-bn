@@ -10,5 +10,4 @@ export class AuthService {
         const savedUser = await newUser.save();
         return savedUser
     }
-
 }

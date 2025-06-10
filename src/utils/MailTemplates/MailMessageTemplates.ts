@@ -10,7 +10,7 @@ export const sendOtpMailTemplate = (firstName:string, generatedOTP:string) => {
 
                 <h2>Your OTP: <strong>${generatedOTP}</strong></h2>
 
-                <p>This OTP is valid for <strong>2 minutes</strong>. Please do not share it with anyone.</p>
+                <p>This OTP is valid for <strong>1 minute</strong>. Please do not share it with anyone.</p>
 
                 <p>If you did not initiate this request, please ignore this email.</p>
 
