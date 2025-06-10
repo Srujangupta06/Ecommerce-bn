@@ -67,6 +67,9 @@ export const verifyOtp = async (req: Request, res: Response): Promise<any> => {
         if (!user) throw new NotFound('User not found')
 
         // Check OTP Expired or not
+        if(user.isVerified){
+            throw new BadRequest('User already registered')
+        }
 
         const isOTPExpired = user.otpExpiresAt < new Date();
         if (isOTPExpired) {
@@ -75,6 +78,7 @@ export const verifyOtp = async (req: Request, res: Response): Promise<any> => {
         }
 
         // Verify OTP
+
         if (user.otp !== otp) {
             throw new BadRequest('Invalid OTP')
         }
@@ -105,7 +109,7 @@ export const signInUser = async (request: Request, response: Response): Promise<
         const { email, password } = request.body
         validateSignInUser({ email, password })
         const loginService = new UserService()
-        const user = await loginService.getUserByEmail(email);
+        const user = await loginService.getUserValidEmail(email);
         if (!user) {
             throw new NotFound("User not found")
         }
@@ -177,7 +181,6 @@ export const resendOtp = async (req: Request, res: Response): Promise<any> => {
         res.json({ message: "OTP sent successfully to your registered email" })
     }
     catch (e: any) {
-        console.log('ERROR:', e)
         res.status(e.statusCode).json(e);
     }
 }
