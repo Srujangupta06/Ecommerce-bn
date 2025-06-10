@@ -67,14 +67,18 @@ export const verifyOtp = async (req: Request, res: Response): Promise<any> => {
         if (!user) throw new NotFound('User not found')
 
         // Check OTP Expired or not
+        if(user.isVerified){
+            throw new BadRequest('User already registered')
+        }
 
         const isOTPExpired = user.otpExpiresAt < new Date();
-        if (isOTPExpired && !user.isVerified) {
+        if (isOTPExpired) {
             await userService.updateOTPStatus(user._id, { otp: null, otpExpiresAt: null, isVerified: false });
             throw new BadRequest('OTP Expired')
         }
 
         // Verify OTP
+
         if (user.otp !== otp) {
             throw new BadRequest('Invalid OTP')
         }
@@ -177,7 +181,6 @@ export const resendOtp = async (req: Request, res: Response): Promise<any> => {
         res.json({ message: "OTP sent successfully to your registered email" })
     }
     catch (e: any) {
-        console.log('ERROR:', e)
         res.status(e.statusCode).json(e);
     }
 }
