@@ -69,7 +69,7 @@ export const verifyOtp = async (req: Request, res: Response): Promise<any> => {
         // Check OTP Expired or not
 
         const isOTPExpired = user.otpExpiresAt < new Date();
-        if (isOTPExpired) {
+        if (isOTPExpired && !user.isVerified) {
             await userService.updateOTPStatus(user._id, { otp: null, otpExpiresAt: null, isVerified: false });
             throw new BadRequest('OTP Expired')
         }
@@ -105,7 +105,7 @@ export const signInUser = async (request: Request, response: Response): Promise<
         const { email, password } = request.body
         validateSignInUser({ email, password })
         const loginService = new UserService()
-        const user = await loginService.getUserByEmail(email);
+        const user = await loginService.getUserValidEmail(email);
         if (!user) {
             throw new NotFound("User not found")
         }
