@@ -6,7 +6,7 @@ import * as bcrypt from 'bcryptjs';
 import { sendMail } from "../utils/Mailer";
 import { generateOTP, setOTPExpiration } from "../utils/GenerateOTP";
 import { AuthService } from "../services/AuthService";
-import { sendOtpMailTemplate } from "../utils/MailTemplates/MailMessageTemplates";
+import { sendOtpMailTemplate,sendForgotPassMailTemplate} from "../utils/MailTemplates/MailMessageTemplates";
 import { generateToken } from "../utils/helpers";
 import { validateSignInUser } from "../utils/validations/SignInUser.validate";
 import { validateResendOTP } from "../utils/validations/ResendOtp.validate";
@@ -187,7 +187,52 @@ export const resendOtp = async (req: Request, res: Response): Promise<any> => {
 
 
 // FORGOT PASSWORD API
+  
+export const forgotPassword = async (req:Request,res:Response):Promise<any> => {
+    try {
+        const {email} = req.body
+        const userServies = new UserService()
+        const user = await userServies.getUserValidEmail(email)
+        if(!user) return res.status(500).json({message:"User not found"})
+        
+        const token = generateToken({id:user._id,email})
+        const saveUsrToken = await userServies.filterToken(token,email)
 
+        sendMail(email,'Password reset',sendForgotPassMailTemplate(`http://localhost:5173/forgot-pass/${token}`))
 
+        res.status(200).json({
+            message:'Token send to your email',
+            user:saveUsrToken
+        })
+    } catch (error) {
+        res.status(500).json({
+            message:'unable to send token to your email'
+        })
+    }
+}
 
 // RESET PASSWORD API
+
+export const resetPassword = async (req:Request,res:Response):Promise<any> => {
+    try {
+        const {password} = req.body
+        const {email} = req.user
+        const hashedPassword = await bcrypt.hash(password,10)
+        const user = await new UserService().resetUsrPassword(email,hashedPassword)
+        const pass = await bcrypt.compare(password,user.password)
+        if(user){
+            return res.status(200).json({
+                message:"Successfully Password updated",
+                pass
+            })
+        }
+        res.status(500).json({
+            message:"Token Expired"
+        })  
+        
+    } catch (error) {
+        res.status(500).json({
+            message:'Failed to change the passowrd'
+        })
+    }
+}

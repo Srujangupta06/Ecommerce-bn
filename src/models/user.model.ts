@@ -18,7 +18,9 @@ export interface IUser extends Document {
     otp?: string | null;
     otpExpiresAt?: Date | null;
     isVerified: boolean;
-    role: UserRole
+    role: UserRole;
+    validToken?:string | undefined;
+    resetPassExpired?:Date | undefined
 }
 
 
@@ -75,7 +77,11 @@ const userSchema = new mongoose.Schema<IUser>(
         role: {
             type: String,
             default: UserRole.user
-        }
+        },
+        validToken:{
+            type:String
+        },
+        resetPassExpired:{type:Date}
     },
     { timestamps: true }
 );

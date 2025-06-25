@@ -1,14 +1,17 @@
 import express, { NextFunction, Request, Response } from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors'
 dotenv.config();
 import initializeDB from './src/config/db';
 import authRoutes from './src/routes/authRouter';
+
 const app = express();
 
 // PORT
 const PORT: number | string = process.env.PORT ?? 5000;
 
 // Middlewares
+app.use(cors())
 app.use(express.json());
 
 // Routes

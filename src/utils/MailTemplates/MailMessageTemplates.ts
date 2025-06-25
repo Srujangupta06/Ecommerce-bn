@@ -21,4 +21,12 @@ export const sendOtpMailTemplate = (firstName:string, generatedOTP:string) => {
             </div>`
 }
 
+export const sendTokenMailTemplate = (link:string) => {
+    return `
+        <div>
+        <h1>Forgot password request</h1>
+        <p>Please click below link to craete a new password </p>
+        <a style="color:blue;" href=${link} target="_blank">Link</a>
+    `
+}
 
